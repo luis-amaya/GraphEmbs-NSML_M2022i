@@ -25,32 +25,37 @@ def parse_args():
 
 
 #-------------------------------------------------------------------------------------------------
-def main(opc, name):
-	if opc==0:
 
-		# Generating synthetic data
-		data  =  Nets(name)
+# run run.py -f ER -opc 0
+
+args  =  parse_args()
+name  =  args.f
+opc  =   int(args.opc)
+
+if opc==0:
+
+	# Generating synthetic data
+	data  =  Nets(name)
+	data.autoencoder.train()
+
+
+	# Visualizing graph embeddings
+	print("Visualizing graph embeddings...")
+	#data.visualize_mssne()
+	data.visualize_tsne()
+
+elif opc==1:
+
+	# Clustering graph embeddings in the embedding space
+	print("Clustering graph embeddings...")
+	nmi_list = []
+	for i in range(0,10):
+
+		# Generate networks with different node permutations
+		data  =  Nets(name,i)
 		data.autoencoder.train()
+		nmi_list.append(data.clustering())
 
 
-		# Visualizing graph embeddings
-		print("Visualizing graph embeddings...")
-		#data.visualize_mssne()
-		data.visualize_tsne()
-
-	elif opc==1:
-
-		# Clustering graph embeddings in the embedding space
-		print("Clustering graph embeddings...")
-		nmi_list = []
-		for i in range(0,10):
-
-			# Generate networks with different node permutations
-			data  =  Nets(name,i)
-			data.autoencoder.train()
-			nmi_list.append(data.clustering())
-
-
-		print(str(round(np.mean(nmi_list),2))+" +/- "+str(round(np.std(nmi_list),2)))
-
+	print(str(round(np.mean(nmi_list),2))+" +/- "+str(round(np.std(nmi_list),2)))
 
